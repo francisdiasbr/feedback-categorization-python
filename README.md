@@ -1,4 +1,4 @@
-# POC: Categorização de Comentários de NPS com IA (OpenAI)
+# POC: Categorização de Feedbacks com o uso de IA (OpenAI)
 
 ## Objetivo
 
