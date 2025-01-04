@@ -1,12 +1,16 @@
-# POC: Categorização de Feedbacks com o uso de IA (OpenAI)
+# Feedback Categorization using AI (OpenAI)
 
-## Objetivo
+[Leia em Português](README_PT.md)
 
-Esta POC tem como objetivo categorizar comentários de clientes utilizando a OpenAI.
 
-A análise será feita com base no texto do comentário para atribuir uma categoria específica que melhor descreva o feedback.
 
-As categorias consideradas são:
+## Objective
+
+This POC aims to categorize customer comments using OpenAI.
+
+A analysis will be done based on the text of the comment to assign a specific category that best describes the feedback.
+
+The categories considered are:
 
 - **ATTENDANCE**
 - **PAYMENT**
@@ -21,51 +25,67 @@ As categorias consideradas são:
 - **INTERESTS**
 - **FINANCIAL_PRODUCTS**
 
-A propriedade `category` no objeto será preenchida pela IA após a análise do comentário.
+</br>
+</br>
+
+The `category` property in the object will be filled by the IA after the analysis of the comment.
+
+| Input (comment) | Output (category) |
+|----------|----------|
+| I was very well attended by the sellers, all friendly and helpful.  | ATTENDANCE  |
+| The store is well organized and comfortable, I liked the spacious area.  | COMFORT  |
+| I bought a shoe that had a defect, but it was replaced quickly.  | PRODUCT_QUALITY  |
+
+A log will be generated with the number of tokens used and the cost in dollars, as below:
+
+![Callback OpenAI](assets/callback_openai.png)
+
+## General Summary
+
+- This code creates a Flask API with a route /categorization.
+- The categorization logic is separated in the controller module.
 
 
-## Resumo geral
+## Environment Configuration and Application Initialization
 
-- Este código cria uma API Flask com uma rota /categorization.
-- A lógica da categorização está separada no módulo controller.
+### Prerequisites: 
 
-
-## Configuração de Ambiente e Inicialização da Aplicação
-
-### Pré-requisitos: 
-
-- Python 3.9+
-- Obter uma api-key no site da OpenAI - https://platform.openai.com/api-keys
+- Python 3.3+
+- Get an api-key from the OpenAI site - https://platform.openai.com/api-keys
 
 
-### 1. Crie e ative o ambiente virtual
+### 1. Create and activate the virtual environment
 
 ```
-  python3 -m venv venv
+  python -m venv venv
   source venv/bin/activate  # Windows: `venv\Scripts\activate`
 ```
 
-### 2. Instale as dependências
+### 2. Install the dependencies
 
 ```
   pip install -r requirements.txt
 ```
 
-### 3. Inicie a aplicação 
+### 3. Start the application 
 
 ```
+cd app
 python app.py
 ```
 
-### 4. Acesse a rota
+### 4. Access the route
 
-Acesse a rota `/categorization` para realizar a categorização dos comentários:
+Access the route `/categorization` to perform categorization of comments:
 
 Request (with cURL):
 
+> In the command line, replace `<api-key>` with your OpenAI api-key.
+
+
 ```
 curl --location 'http://127.0.0.1:5000/categorization' \
---header 'api-key: xxx' \
+--header 'api-key: <api-key>' \
 --header 'model: gpt-4o' \
 --header 'Content-Type: application/json' \
 --data '{
@@ -73,22 +93,24 @@ curl --location 'http://127.0.0.1:5000/categorization' \
     "comments": [
         {
             "id": 1,
-            "comment": "Fui muito bem atendido pelos vendedores, todos simpáticos e prestativos."
+            "comment": "I was very well attended by the sellers, all friendly and helpful."
         },
         {
             "id": 2,
-            "comment": "A loja é bem organizada e confortável, gostei do espaço amplo."
+            "comment": "The store is well organized and comfortable, I liked the spacious area."
         },
         {
             "id": 3,
-            "comment": "Comprei um sapato que veio com defeito, mas foi trocado rapidamente."
+            "comment": "I bought a shoe that had a defect, but it was replaced quickly."
         }
     ],
-    "instructions": "Você é um especialista em classificar comentários. Classifique cada comentário com sua respectiva categoria."
+    "instructions": "You are an expert in categorizing comments. Categorize each comment with its respective category."
 }'
 ```
 
-corpo da request (JSON):
+### Input Data
+
+request body (JSON):
 
 ```
 {
@@ -96,40 +118,40 @@ corpo da request (JSON):
     "comments": [
         {
             "id": 1,
-            "comment": "Fui muito bem atendido pelos vendedores, todos simpáticos e prestativos."
+            "comment": "I was very well attended by the sellers, all friendly and helpful."
         },
         {
             "id": 2,
-            "comment": "A loja é bem organizada e confortável, gostei do espaço amplo."
+            "comment": "The store is well organized and comfortable, I liked the spacious area."
         },
         {
             "id": 3,
-            "comment": "Comprei um sapato que veio com defeito, mas foi trocado rapidamente."
+            "comment": "I bought a shoe that had a defect, but it was replaced quickly."
         }
     ],
-    "instructions": "Você é um especialista em classificar comentários. Classifique cada comentário com sua respectiva categoria."
+    "instructions": "You are an expert in categorizing comments. Categorize each comment with its respective category."
 }
 ```
 
 
-Exemplo de resposta:
+### Response:
 
 ```
 {
     "data": [
         {
             "category": "ATTENDANCE",
-            "comment": "Fui muito bem atendido pelos vendedores, todos simpáticos e prestativos.",
+            "comment": "I was very well attended by the sellers, all friendly and helpful.",
             "id": 1
         },
         {
             "category": "COMFORT",
-            "comment": "A loja é bem organizada e confortável, gostei do espaço amplo.",
+            "comment": "The store is well organized and comfortable, I liked the spacious area.",
             "id": 2
         },
         {
             "category": "PRODUCT_QUALITY",
-            "comment": "Comprei um sapato que veio com defeito, mas foi trocado rapidamente.",
+            "comment": "I bought a shoe that had a defect, but it was replaced quickly.",
             "id": 3
         }
     ],
@@ -137,10 +159,10 @@ Exemplo de resposta:
 }
 ```
 
-## Observações
+## Observations
 
-Arquivo de Dados Mock: Mais exemplos podem ser encontrados no arquivo mockdata.json.
+Mock Data File: More examples of comments without categorization can be found in the mockdata.json file.
 
-Headers Necessários: Certifique-se de incluir os headers api-key e model com valores adequados.
+Required Headers: Ensure that the headers api-key and model are included with appropriate values.
 
-Personalização: A lista de categorias e os comentários podem ser adaptados conforme a necessidade do projeto.
+Customization: The list of categories and comments can be adapted according to the project's needs.
